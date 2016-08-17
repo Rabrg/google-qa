@@ -18,7 +18,7 @@ public final class KnowledgeUtil {
 
     public static void main(String[] args) {
         try {
-            final String query = "Berlin";
+            final String query = "commissioner";
             System.out.println(getTypes(query));
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -30,7 +30,8 @@ public final class KnowledgeUtil {
         try {
             getGoogleTypes(types, query);
             getDBPediaTypes(types, query);
-        } catch (final IOException e) {
+            Thread.sleep(105);
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         types.replaceAll(String::toUpperCase);

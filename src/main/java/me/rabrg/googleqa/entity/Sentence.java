@@ -10,7 +10,7 @@ public final class Sentence {
     private final String text;
     private final List<Word> words;
     private final List<Dependency> dependencies;
-    private List<NamedEntity> namedEntities;
+    private final List<NamedEntity> namedEntities;
 
     public Sentence(final String text, final List<Word> words, final List<Dependency> dependencies, final List<NamedEntity> namedEntities) {
         this.text = text;
@@ -35,8 +35,67 @@ public final class Sentence {
         return namedEntities;
     }
 
-    public void setNamedEntities(List<NamedEntity> namedEntities) {
-        this.namedEntities = namedEntities;
+    public Word getRoot() {
+        for (final Dependency dependency : dependencies) {
+            if ("ROOT".equals(dependency.getReln())) {
+                return dependency.getDep();
+            }
+        }
+        return null;
+    }
+
+    public final List<Word> getSubject() {
+        Word rootSubject = null;
+        for (final Dependency dependency : dependencies) {
+            if (dependency.getReln().contains("SUBJ")) {
+                rootSubject = dependency.getDep();
+                break;
+            }
+        }
+        if (rootSubject != null) {
+            final List<Word> object = new ArrayList<>();
+            object.add(rootSubject);
+            int size;
+            do {
+                size = object.size();
+                for (final Dependency dependency : dependencies) {
+                    if (dependency.getDep().getIndex() < rootSubject.getIndex() && object.contains(dependency.getGov())
+                            && !"DET".equals(dependency.getReln()) && !object.contains(dependency.getDep())) {
+                        object.add(dependency.getDep());
+                    }
+                }
+            } while (size != object.size());
+            Collections.sort(object);
+            return object;
+        }
+        return null;
+    }
+
+    public final List<Word> getObject() {
+        Word rootObject = null;
+        for (final Dependency dependency : dependencies) {
+            if (dependency.getReln().contains("OBJ")) {
+                rootObject = dependency.getDep();
+                break;
+            }
+        }
+        if (rootObject != null) {
+            final List<Word> object = new ArrayList<>();
+            object.add(rootObject);
+            int size;
+            do {
+                size = object.size();
+                for (final Dependency dependency : dependencies) {
+                    if (dependency.getDep().getIndex() < rootObject.getIndex() && object.contains(dependency.getGov())
+                            && !"DET".equals(dependency.getReln()) && !object.contains(dependency.getDep())) {
+                        object.add(dependency.getDep());
+                    }
+                }
+            } while (size != object.size());
+            Collections.sort(object);
+            return object;
+        }
+        return null;
     }
 
     public List<String> getApposStrings() {

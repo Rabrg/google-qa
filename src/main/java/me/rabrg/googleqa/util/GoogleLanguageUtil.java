@@ -67,7 +67,9 @@ public final class GoogleLanguageUtil {
 
 
     public static void main(final String[] args) {
-        System.out.println(getEntities("Who did the Broncos prevent from going to the Super Bowl?"));
+        for (final Dependency dependency : getSentence("Who lost to the Broncos in the AFC Championship?").getDependencies()) {
+            System.out.println(dependency);
+        }
     }
 
     public static List<NamedEntity> getEntities(final String text) {
